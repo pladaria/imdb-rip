@@ -42,7 +42,11 @@ const getMain = async (id) => {
             .first()
             .text() || null;
 
-    return {title, genres, plot, storyline, score};
+    // countries
+    const countries = $('[data-testid="title-details-origin"] li')
+        .toArray()
+        .map((e) => $(e).text().trim());
+    return {title, genres, plot, storyline, score, countries};
 };
 
 /**
@@ -151,6 +155,27 @@ const getTechnical = async (id) => {
     return technical;
 };
 
+const getCredits = async (id) => {
+    const result = await fetch(
+        `https://www.imdb.com/title/${id}/fullcredits`,
+        fetchOptions
+    );
+    const html = await result.text();
+    const $ = cheerio.load(html);
+    const directors = $('h4#director ~ table')
+        .first()
+        .find('tr')
+        .toArray()
+        .map((e) => $(e).find('td.name').text().trim());
+
+    const actors = $('table.cast_list')
+        .find('td.primary_photo a img')
+        .toArray()
+        .map((e) => $(e).attr('title').trim());
+
+    return {directors, actors};
+};
+
 /**
  * @param {string} id for example: "tt7221388"
  */
@@ -161,9 +186,11 @@ const getTitle = async (id) => {
         getKeywords(id),
         getReleaseInfo(id),
         getTechnical(id),
+        getCredits(id),
     ]);
     return Object.assign({}, ...parts);
 };
 
-getTitle('tt7221388').then(console.log);
-// getTitle('tt0133093').then(console.log);
+module.exports = {getTitle};
+
+// getTitle('tt7126948').then(console.log);
