@@ -1,5 +1,7 @@
 # imdb-rip
 
+:warning: No longer extracts from imdb. Queries TMDB using the IMDb ID.
+
 TMDB metadata client, written in TypeScript. It looks up movie, TV and episode
 metadata using an IMDb ID, so it does not scrape IMDb HTML. When available, it
 also resolves the FilmAffinity URL through Wikidata.
